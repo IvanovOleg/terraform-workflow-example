@@ -1,0 +1,23 @@
+name: A workflow for a basic terraform execution
+on: push
+jobs:
+  terraform:
+    name: Create a terraform environment
+    runs-on: ubuntu-latest    
+    steps:
+      - uses: actions/checkout@master
+      - run: docker run -v $GITHUB_WORKSPACE/terraform:/terraform -w /terraform hashicorp/terraform:light init -input=false
+        env:
+          TF_IN_AUTOMATION: "true"
+      - run: docker run -v $GITHUB_WORKSPACE/terraform:/terraform -w /terraform hashicorp/terraform:light plan -input=false
+        env:
+          TF_IN_AUTOMATION: "true"
+      - run: docker run -v $GITHUB_WORKSPACE/terraform:/terraform -w /terraform hashicorp/terraform:light apply -auto-approve -input=false
+        env:
+          TF_IN_AUTOMATION: "true"
+  bash:
+    name: Output current path
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: pwd
